@@ -124,7 +124,7 @@ const handleSignUp = async (req, res) => {
       fullname: reqBody.fullname,
     });
 
-    const url = `${process.env.CLIENT_URL}/user/activate/${activation_token}`;
+    const url = `${process.env.CLIENT_URL}/user/activation/${activation_token}`;
 
     sendEmail(reqBody.email, url, compiledTemplate);
 
@@ -184,6 +184,7 @@ const verifyEmail = async (req, res) => {
       .status(201)
       .json({ msg: 'Login success', result: savedAcc, token: access_token });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ error: error.message });
   }
 };
