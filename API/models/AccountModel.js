@@ -1,13 +1,12 @@
 /** @format */
 
-'use strict'
+'use strict';
 
-import mongoose from 'mongoose'
-import bcrypt from 'bcrypt'
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
-const Schema = mongoose.Schema
-const model = mongoose.model
-const SALT_WORK_FACTOR = process.env.SALT || 10
+const Schema = mongoose.Schema;
+const model = mongoose.model;
 
 const AccountModel = new Schema(
   {
@@ -33,14 +32,14 @@ const AccountModel = new Schema(
     },
   },
   { timestamps: true },
-)
+);
 
 AccountModel.methods.comparePassword = async function (candidatePassword) {
   try {
-    return await bcrypt.compare(candidatePassword, this.password)
+    return await bcrypt.compare(candidatePassword, this.password);
   } catch (error) {
-    return error
+    return error;
   }
-}
+};
 
-export default model('Account', AccountModel)
+export default model('Account', AccountModel);

@@ -31,8 +31,7 @@ const handleLogIn = async (req, res) => {
       path: 'user',
       model: 'User',
       populate: {
-        path: 'follower following',
-        model: 'User',
+        path: 'follower following avatar cover',
       },
     });
 
@@ -69,9 +68,8 @@ const handleLogIn = async (req, res) => {
 
     res.status(200).json({
       msg: 'Login success',
-      token: access_token,
       username: exitsAcc.username,
-      user: exitsAcc.user,
+      userDetail: exitsAcc.user,
       role: exitsAcc.role,
     });
   } catch (error) {

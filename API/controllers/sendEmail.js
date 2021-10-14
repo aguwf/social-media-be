@@ -1,8 +1,10 @@
-import nodemailer from 'nodemailer'
-import { google } from 'googleapis'
+/** @format */
 
-const { OAuth2 } = google.auth
-const OAUTH_PLAYGROUND = 'https://developers.google.com/oauthplayground'
+import nodemailer from 'nodemailer';
+import { google } from 'googleapis';
+
+const { OAuth2 } = google.auth;
+const OAUTH_PLAYGROUND = 'https://developers.google.com/oauthplayground';
 
 // let MAILING_SERVICE_CLIENT_ID
 // let MAILING_SERVICE_CLIENT_SECRET
@@ -20,32 +22,32 @@ const createTransporter = async () => {
   const oauth2Client = new OAuth2(
     process.env.MAILING_SERVICE_CLIENT_ID,
     process.env.MAILING_SERVICE_CLIENT_SECRET,
-    OAUTH_PLAYGROUND
+    OAUTH_PLAYGROUND,
   );
 
   oauth2Client.setCredentials({
-    refresh_token: process.env.MAILING_SERVICE_REFRESH_TOKEN
-  })
+    refresh_token: process.env.MAILING_SERVICE_REFRESH_TOKEN,
+  });
 
   const accessToken = await new Promise((resolve, reject) => {
     oauth2Client.getAccessToken((err, token) => {
       if (err) {
-        reject("Failed to create access token :(");
+        reject('Failed to create access token :(');
       }
       resolve(token);
     });
   });
 
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    service: 'gmail',
     auth: {
-      type: "OAuth2",
+      type: 'OAuth2',
       user: process.env.SENDER_EMAIL_ADDRESS,
       accessToken,
       clientId: process.env.MAILING_SERVICE_CLIENT_ID,
       clientSecret: process.env.MAILING_SERVICE_CLIENT_SECRET,
-      refreshToken: process.env.MAILING_SERVICE_REFRESH_TOKEN
-    }
+      refreshToken: process.env.MAILING_SERVICE_REFRESH_TOKEN,
+    },
   });
 
   return transporter;
@@ -57,55 +59,17 @@ const sendEmail = async (to, url, compiledTemplate) => {
       from: process.env.SENDER_EMAIL_ADDRESS,
       to: to,
       subject: `Meo's Network`,
-      html: compiledTemplate.render({ url })
-    }
-  
+      html: compiledTemplate.render({ url }),
+    };
+
     let emailTransporter = await createTransporter();
     const info = await emailTransporter.sendMail(emailOptions);
-    return info
+    console.log(info);
+    return info;
   } catch (error) {
-    return error
+    console.log(error);
+    return error;
   }
 };
 
-// const sendEmail = async (to, url, compiledTemplate) => {
-//   try {
-//     MAILING_SERVICE_CLIENT_ID = process.env.MAILING_SERVICE_CLIENT_ID
-//     MAILING_SERVICE_CLIENT_SECRET = process.env.MAILING_SERVICE_CLIENT_SECRET
-//     MAILING_SERVICE_REFRESH_TOKEN = process.env.MAILING_SERVICE_REFRESH_TOKEN
-//     SENDER_EMAIL_ADDRESS = process.env.SENDER_EMAIL_ADDRESS
-
-//     oauth2Client.setCredentials({
-//       refresh_token: MAILING_SERVICE_REFRESH_TOKEN
-//     })
-
-//     const access_token = oauth2Client.getAccessToken()
-//     const smtpTransport = nodemailer.createTransport({
-//       service: 'gmail',
-//       auth: {
-//         type: 'OAuth2',
-//         user: SENDER_EMAIL_ADDRESS,
-//         clientId: MAILING_SERVICE_CLIENT_ID,
-//         clientSecret: MAILING_SERVICE_CLIENT_SECRET,
-//         refreshToken: MAILING_SERVICE_REFRESH_TOKEN,
-//         accessToken: access_token
-//       }
-//     })
-
-//     const mailOptions = {
-//       from: SENDER_EMAIL_ADDRESS,
-//       to: to,
-//       subject: `Meo's Network`,
-//       html: compiledTemplate.render({ url })
-//     }
-
-//     const info = await smtpTransport.sendMail(mailOptions).catch((error) => {
-//       console.log(error);
-//     })
-//     return info
-//   } catch (error) {
-//     return error
-//   }
-// }
-
-export default sendEmail
+export default sendEmail;

@@ -33,6 +33,25 @@ const getSingleUser = async (req, res) => {
         model: 'Image',
         path: 'cover',
       },
+      {
+        model: 'Post',
+        path: 'posts',
+        options: { sort: { createdAt: -1 } },
+        populate: [
+          {
+            path: 'owner',
+            model: 'User',
+            populate: {
+              path: 'avatar',
+              model: 'Image',
+            },
+          },
+          {
+            path: 'likes',
+            model: 'User',
+          },
+        ],
+      },
     ]);
 
     res.status(200).json({ userDetail });
@@ -41,55 +60,100 @@ const getSingleUser = async (req, res) => {
   }
 };
 
-const uploadAvatar = async (req, res) => {
+const uploadImage = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).populate('avatar');
+    req.files.forEach(async (file, index) => {
+      if (file?.fieldname === 'avatar') {
+        const user = await User.findById(req.user.id).populate('avatar');
 
-    await Upload.deleteImage(user?.avatar?.cloudinary_id);
+        console.log(user);
 
-    await Image.findByIdAndDelete(user?.avatar?._id);
+        if (user?.avatar?._id) {
+          await Upload.deleteImage(user?.avatar?.cloudinary_id);
 
-    const request = {
-      file: req.files[0],
-      path: 'MeoNetwork/Avatar',
-    };
+          await Image.findByIdAndDelete(user?.avatar?._id);
+        }
 
-    const result = await Upload.uploadSingle(request);
+        const request = {
+          file: file,
+          path: 'MeoNetwork/Avatar',
+        };
 
-    const savedImage = await Image.create(result);
+        const result = await Upload.uploadSingle(request);
 
-    await User.findByIdAndUpdate(req.user.id, { avatar: savedImage._id });
+        const savedImage = await Image.create(result);
 
-    res.status(200).json({ msg: 'Upload avatar success !' });
+        await User.findByIdAndUpdate(req.user.id, {
+          avatar: savedImage._id,
+          $push: {
+            images: {
+              $each: [savedImage._id],
+            },
+          },
+        });
+      }
+
+      if (file?.fieldname === 'cover') {
+        const user = await User.findById(req.user.id).populate('cover');
+
+        if (user?.cover?._id) {
+          await Upload.deleteImage(user?.cover?.cloudinary_id);
+
+          await Image.findByIdAndDelete(user?.cover?._id);
+        }
+
+        const request = {
+          file: file,
+          path: 'MeoNetwork/Cover',
+        };
+
+        const result = await Upload.uploadSingle(request);
+
+        const savedImage = await Image.create(result);
+
+        await User.findByIdAndUpdate(req.user.id, {
+          cover: savedImage._id,
+          $push: {
+            images: {
+              $each: [savedImage._id],
+            },
+          },
+        });
+      }
+
+      if (req.files.length - 1 === index) {
+        res.status(200).json({ msg: 'Upload image success !' });
+      }
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 };
 
-const uploadCover = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id).populate('cover');
+// const uploadCover = async (req, res) => {
+//   try {
+//     const user = await User.findById(req.user.id).populate('cover');
 
-    await Upload.deleteImage(user?.cover?.cloudinary_id);
+//     await Upload.deleteImage(user?.cover?.cloudinary_id);
 
-    await Image.findByIdAndDelete(user?.cover?._id);
+//     await Image.findByIdAndDelete(user?.cover?._id);
 
-    const request = {
-      file: req.files[0],
-      path: 'MeoNetwork/Cover',
-    };
+//     const request = {
+//       file: req.files[0],
+//       path: 'MeoNetwork/Cover',
+//     };
 
-    const result = await Upload.uploadSingle(request);
+//     const result = await Upload.uploadSingle(request);
 
-    const savedImage = await Image.create(result);
+//     const savedImage = await Image.create(result);
 
-    await User.findByIdAndUpdate(req.user.id, { cover: savedImage._id });
+//     await User.findByIdAndUpdate(req.user.id, { cover: savedImage._id });
 
-    res.status(200).json({ msg: 'Upload cover image success !' });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-};
+//     res.status(200).json({ msg: 'Upload cover image success !' });
+//   } catch (error) {
+//     return res.status(500).json({ error: error.message });
+//   }
+// };
 
 const updateUser = async (req, res) => {
   try {
@@ -103,4 +167,4 @@ const updateUser = async (req, res) => {
   }
 };
 
-export { getSingleUser, uploadAvatar, uploadCover, updateUser };
+export { getSingleUser, uploadImage, updateUser };

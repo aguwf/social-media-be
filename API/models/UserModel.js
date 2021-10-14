@@ -1,7 +1,9 @@
-import mongoose from 'mongoose'
+/** @format */
 
-const Schema = mongoose.Schema
-const model = mongoose.model
+import mongoose from 'mongoose';
+
+const Schema = mongoose.Schema;
+const model = mongoose.model;
 
 const UserModel = new Schema(
   {
@@ -9,74 +11,88 @@ const UserModel = new Schema(
       type: String,
       required: [true, 'Yeu cau nhap fullname'],
       trim: true,
-      maxLength: 25
+      maxLength: 25,
     },
     avatar: {
       type: Schema.Types.ObjectId,
-      ref: 'Image'
+      ref: 'Image',
     },
-    cover:{
+    cover: {
       type: Schema.Types.ObjectId,
-      ref: 'Image'
+      ref: 'Image',
     },
-    images: [{
-      type: Schema.Types.ObjectId,
-      ref: 'Image'
-    }],
+    images: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Image',
+      },
+    ],
+    posts: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Post',
+      },
+    ],
+    savedPost: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Post',
+      },
+    ],
     role: {
       type: String,
       enum: ['user', 'admin'],
       default: 'user',
-      required: [true, 'role required']
+      required: [true, 'role required'],
     },
     gender: {
       type: String,
       enum: ['Nam', 'Nu'],
-      default: 'Nam'
+      default: 'Nam',
     },
     tel: {
       type: String,
-      default: ''
+      default: '',
     },
     address: {
       type: String,
-      default: ''
+      default: '',
     },
     birthday: {
       type: Date,
-      default: Date.now()
+      default: Date.now(),
     },
     story: {
       type: String,
-      default: ''
+      default: '',
     },
     website: {
       type: String,
-      default: ''
+      default: '',
     },
     follower: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'User'
-      }
+        ref: 'User',
+      },
     ],
     following: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'User'
-      }
+        ref: 'User',
+      },
     ],
     account: {
       type: Schema.Types.ObjectId,
       ref: 'Account',
-      required: [true, 'account id required!']
+      required: [true, 'account id required!'],
     },
     isValid: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
-  { timestamps: true }
-)
+  { timestamps: true },
+);
 
-export default model('User', UserModel)
+export default model('User', UserModel);

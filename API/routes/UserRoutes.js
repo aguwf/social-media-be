@@ -10,13 +10,9 @@ const router = express.Router();
 router.route('/:id').get(auth.verify, userHandle.getSingleUser);
 
 router
-  .route('/avatar')
-  .post(upload.uploadVerify, auth.verify, userHandle.uploadAvatar);
+  .route('/upload')
+  .post(upload.uploadVerify, auth.verify, userHandle.uploadImage);
 
-router
-  .route('/cover')
-  .post(upload.uploadVerify, auth.verify, userHandle.uploadCover);
-
-router.route('/update').patch(auth.verify, userHandle.updateUser);
+router.route('/update').put(auth.verify, userHandle.updateUser);
 
 export default router;
