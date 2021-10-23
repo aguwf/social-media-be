@@ -38,14 +38,14 @@ const handleLogIn = async (req, res) => {
     if (!exitsAcc)
       return res
         .status(404)
-        .json({ error: 'Username or password is incorrect !' });
+        .json({ msg: 'Username or password is incorrect !' });
 
     const isMatch = await exitsAcc.comparePassword(reqBody.password);
 
     if (!isMatch)
       return res
         .status(404)
-        .json({ error: 'Username or password is incorrect !' });
+        .json({ msg: 'Username or password is incorrect !' });
 
     const access_token = auth.getAccessToken({
       id: exitsAcc.user._id,
@@ -84,7 +84,7 @@ const handleSignUp = async (req, res) => {
     const compiledTemplate = Hogan.compile(template);
 
     if (reqBody.password !== reqBody.confirm_password)
-      return res.status(404).json({ error: 'Password do not match !' });
+      return res.status(404).json({ msg: 'Password do not match !' });
 
     const ctn = await Account.countDocuments({
       $or: [{ username: reqBody.username }, { email: reqBody.email }],
@@ -93,16 +93,16 @@ const handleSignUp = async (req, res) => {
     if (ctn >= 1)
       return res
         .status(404)
-        .json({ error: 'Username or email are already in use !' });
+        .json({ msg: 'Username or email are already in use !' });
 
     if (reqBody.password < 6) {
       return res
         .status(404)
-        .json({ error: 'Password must be at least 6 characters.' });
+        .json({ msg: 'Password must be at least 6 characters.' });
     }
 
     if (!validateEmail(reqBody.email)) {
-      return res.status(500).json({ error: 'Invalid email address.' });
+      return res.status(500).json({ msg: 'Invalid email address.' });
     }
 
     const hashPassword = bcrypt.hashSync(

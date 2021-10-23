@@ -59,6 +59,16 @@ export const postHandle = {
               {
                 path: 'likes',
               },
+
+              {
+                path: 'comments',
+                populate: {
+                  path: 'owner',
+                  populate: {
+                    path: 'avatar',
+                  },
+                },
+              },
             ])
         : (
             await User.findById(savedPost.owner)
@@ -88,6 +98,16 @@ export const postHandle = {
                     {
                       path: 'likes',
                       model: 'User',
+                    },
+
+                    {
+                      path: 'comments',
+                      populate: {
+                        path: 'owner',
+                        populate: {
+                          path: 'avatar',
+                        },
+                      },
                     },
                   ],
                 },
@@ -133,6 +153,16 @@ export const postHandle = {
               {
                 path: 'likes',
               },
+
+              {
+                path: 'comments',
+                populate: {
+                  path: 'owner',
+                  populate: {
+                    path: 'avatar',
+                  },
+                },
+              },
             ])
         : (
             await User.findById(patchPost.owner)
@@ -162,6 +192,16 @@ export const postHandle = {
                     {
                       path: 'likes',
                       model: 'User',
+                    },
+
+                    {
+                      path: 'comments',
+                      populate: {
+                        path: 'owner',
+                        populate: {
+                          path: 'avatar',
+                        },
+                      },
                     },
                   ],
                 },
@@ -200,6 +240,16 @@ export const postHandle = {
               {
                 path: 'likes',
               },
+
+              {
+                path: 'comments',
+                populate: {
+                  path: 'owner',
+                  populate: {
+                    path: 'avatar',
+                  },
+                },
+              },
             ])
         : (
             await User.findById(patchPost.owner)
@@ -230,6 +280,16 @@ export const postHandle = {
                       path: 'likes',
                       model: 'User',
                     },
+
+                    {
+                      path: 'comments',
+                      populate: {
+                        path: 'owner',
+                        populate: {
+                          path: 'avatar',
+                        },
+                      },
+                    },
                   ],
                 },
               ])
@@ -256,6 +316,15 @@ export const postHandle = {
           },
           {
             path: 'likes',
+          },
+          {
+            path: 'comments',
+            populate: {
+              path: 'owner',
+              populate: {
+                path: 'avatar',
+              },
+            },
           },
         ]);
       return res.status(200).json({ listPost });

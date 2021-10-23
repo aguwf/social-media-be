@@ -50,6 +50,16 @@ const getSingleUser = async (req, res) => {
             path: 'likes',
             model: 'User',
           },
+
+          {
+            path: 'comments',
+            populate: {
+              path: 'owner',
+              populate: {
+                path: 'avatar',
+              },
+            },
+          },
         ],
       },
     ]);
@@ -129,31 +139,6 @@ const uploadImage = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
-
-// const uploadCover = async (req, res) => {
-//   try {
-//     const user = await User.findById(req.user.id).populate('cover');
-
-//     await Upload.deleteImage(user?.cover?.cloudinary_id);
-
-//     await Image.findByIdAndDelete(user?.cover?._id);
-
-//     const request = {
-//       file: req.files[0],
-//       path: 'MeoNetwork/Cover',
-//     };
-
-//     const result = await Upload.uploadSingle(request);
-
-//     const savedImage = await Image.create(result);
-
-//     await User.findByIdAndUpdate(req.user.id, { cover: savedImage._id });
-
-//     res.status(200).json({ msg: 'Upload cover image success !' });
-//   } catch (error) {
-//     return res.status(500).json({ error: error.message });
-//   }
-// };
 
 const updateUser = async (req, res) => {
   try {
